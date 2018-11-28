@@ -9,7 +9,18 @@ router.get("/user/:creatorId", (req, res, next) => {
     .catch(next)
 })
 
+
+//Find all ship logs user has access to
+router.get('/', (req, res, next) => {
+  Logs.find({})
+    .then(logs => {
+      let logsToSend = logs.filter(log => (ranks.indexOf(req.session.uRank) <= ranks.indexOf(log.createrRank)))
+      res.send(logsToSend)
+    }).catch(next)
+})
+
 router.post('/', (req, res, next) => {
+  req.body.createrRank = req.session.uRank
   Logs.create(req.body)
     .then(log => {
       res.send(log)
@@ -18,13 +29,13 @@ router.post('/', (req, res, next) => {
 })
 
 router.delete('/:id', (req, res, next) => {
-  Logs.findByIdAndDelete(req.params.id)
+  Logs.findOneAndDelete({ _id: req.params.id, creatorId: req.session.uid })
     .then(log => res.send({ message: "DELORTED", data: log }))
     .catch(next)
 })
 
-router.put('/:id', (req, res, next) => {
-  Logs.findByIdAndUpdate(req.params.id, req.body, { new: true })
+router.put('/user/:id', (req, res, next) => {
+  Logs.findOneAndUpdate({ _id: req.params.id, creatorId: req.session.uid }, req.body, { new: true })
     .then(log => res.send(log))
     .catch(next)
 })

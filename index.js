@@ -6,6 +6,7 @@ let PORT = process.env.PORT || 3000
 
 server.use(bp.json())
 server.use(bp.urlencoded({ extended: true }))
+server.use(express.static(__dirname + '/public'))
 
 let auth = require('./server/auth/routes')
 server.use(auth.session)

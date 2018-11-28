@@ -43,11 +43,6 @@ router.delete('/logout', (req, res, next) => {
   })
 })
 
-// router.delete('/deleteUser', (req, res, next) => {
-//   Users.deleteOne
-// })
-
-
 
 //authenticate the session token
 router.get('/authenticate', (req, res, next) => {
@@ -56,6 +51,7 @@ router.get('/authenticate', (req, res, next) => {
   }
   Users.findById(req.session.uid).then(user => {
     delete user._doc.hash
+    req.session.uRank = user.rank
     res.send(user)
   })
     .catch(err => next(new Error("Invalid Credentials")))
